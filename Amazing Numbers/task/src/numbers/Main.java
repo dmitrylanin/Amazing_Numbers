@@ -1,5 +1,7 @@
 package numbers;
 
+import java.util.Arrays;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
@@ -68,40 +70,60 @@ public class Main {
 
 
             if(strRequest.length >= 4){
-                if(!"EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY, SQUARE, SUNNY, JUMPING".contains(strRequest[2].toUpperCase())
-                    && !"EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY, SQUARE, SUNNY, JUMPING".contains(strRequest[3].toUpperCase()))
-                {
-                    System.out.println("The properties [" + strRequest[2].toUpperCase() + ", " + strRequest[3].toUpperCase() + "] are wrong.");
-                    System.out.println("Available properties: [EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY, SQUARE, SUNNY, JUMPING]");
+                String [] strArr = Arrays.copyOfRange(strRequest, 2, strRequest.length);
+
+                //ИЩУ ОШИБОЧНЫЕ СВОЙСТВА
+                String incorrectProperties = "";
+
+                for(int j = 0; j < strArr.length; j++){
+                    if (!"EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY, SQUARE, SUNNY, JUMPING".contains(strArr[j].toUpperCase())){
+                        incorrectProperties += strArr[j] + " ";
+                    }
+                }
+
+                incorrectProperties = incorrectProperties.trim();
+                if (incorrectProperties.length()>0){
+                    if(!incorrectProperties.contains(" ")){
+                        System.out.println("The property [" + incorrectProperties + "] is wrong.");
+                        System.out.println("Available properties: [EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY, SQUARE, SUNNY, JUMPING]");
+                        marker = false;
+                    }else{
+                        System.out.println("The properties [" + incorrectProperties + "] are wrong.");
+                        System.out.println("Available properties: [EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY, SQUARE, SUNNY, JUMPING]");
+                        marker = false;
+                    }
+                }
+
+                //ИЩУ ДУБЛИ
+                StringBuilder strWithOutDouble = new StringBuilder(strArr[0].toUpperCase());
+                for(int j = 1; j < strArr.length; j++){
+                    if(strWithOutDouble.indexOf(strArr[j]) == -1){
+                        strWithOutDouble = strWithOutDouble.append(" "+strArr[j].toUpperCase());
+                    }
+                }
+                String finalProperties = new String(strWithOutDouble).toUpperCase().trim();
+
+                //Если свойства оказались дублями
+                if (!finalProperties.contains(" ")){
+                    routerSolo(base, amount, finalProperties);
                     marker = false;
                 }
 
-                if(!"EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY, SQUARE, SUNNY, JUMPING".contains(strRequest[2].toUpperCase()) && marker){
-                    System.out.println("The property [" + strRequest[2].toUpperCase() + "] is wrong.");
-                    System.out.println("Available properties: [EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY, SQUARE, SUNNY, JUMPING]");
+                //ПРОВЕРКА, что нет взаимоисключающих свойств
+                if(finalProperties.contains("EVEN") && finalProperties.contains("ODD")){
+                    System.out.println("The request contains mutually exclusive properties: [EVEN, ODD]");
+                    System.out.println("There are no numbers with these properties.");
                     marker = false;
-                }
-
-                if(!"EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY, SQUARE, SUNNY, JUMPING".contains(strRequest[3].toUpperCase()) && marker){
-                    System.out.println("The property [" + strRequest[3].toUpperCase() + "] is wrong.");
-                    System.out.println("Available properties: [EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY, SQUARE, SUNNY, JUMPING]");
+                }else if(finalProperties.contains("DUCK") && finalProperties.contains("SPY")){
+                    System.out.println("The request contains mutually exclusive properties: [DUCK, SPY]");
+                    System.out.println("There are no numbers with these properties.");
                     marker = false;
-                }
-
-                if (strRequest[3].equalsIgnoreCase(strRequest[2])){
-                    routerSolo(base, amount, strRequest[2].toUpperCase());
-                    marker = false;
-                }
-
-                if(("even odd".contains(strRequest[2].toLowerCase()) && "even odd".contains(strRequest[3].toLowerCase()))
-                        || ("duck spy".contains(strRequest[2].toLowerCase()) && "duck spy".contains(strRequest[3].toLowerCase()))
-                        || ("sunny square".contains(strRequest[2].toLowerCase()) && "sunny square".contains(strRequest[3].toLowerCase()))
-                ){
-                    System.out.println("The request contains mutually exclusive properties: [" + strRequest[3].toUpperCase() +", " + strRequest[2].toUpperCase() + "]");
+                }else if(finalProperties.contains("SUNNY") && finalProperties.contains("SQUARE")) {
+                    System.out.println("The request contains mutually exclusive properties: [SUNNY, SQUARE]");
                     System.out.println("There are no numbers with these properties.");
                     marker = false;
                 }else if (marker){
-                    routerMulty(base, amount, strRequest[2].toUpperCase(), strRequest[3].toUpperCase());
+                    routerMulty(base, amount, finalProperties);
                     marker = false;
                 }
             }
@@ -203,12 +225,24 @@ public class Main {
         }
     }
 
-    public static void routerMulty(long number, long amount, String type1, String type2) {
+    public static void routerMulty(long number, long amount, String str){
         int count = 0;
+        String [] strArr = str.split(" ");
+        boolean marker = false;
+
         for (long i = number; count<amount; i++){
-            if(DigitTypes.valueOf(type1).isType(i) && DigitTypes.valueOf(type2).isType(i)){
+            for (int j = 0; j<strArr.length; j++){
+                if(DigitTypes.valueOf(strArr[j]).isType(i)){
+                    marker = true;
+                }else{
+                    marker = false;
+                    break;
+                }
+            }
+            if(marker){
                 count++;
                 System.out.println(makeString(i));
+                marker = false;
             }
         }
     }

@@ -174,13 +174,13 @@ public enum DigitTypes implements Checable{
                     return false;
                 }
 
+                if (number == leftNumber && (leftNumber-rightNumber == 1 || leftNumber-rightNumber == -1)){
+                    return true;
+                }
+
                 rightNumber = leftNumber;
                 number = number/10;
                 leftNumber = number%10;
-
-                if (number == leftNumber && (leftNumber-rightNumber == 1 || leftNumber-rightNumber == -1)){
-                    return marker;
-                }
             }
         }
     };
