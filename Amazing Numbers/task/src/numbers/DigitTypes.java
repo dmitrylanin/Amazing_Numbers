@@ -183,5 +183,78 @@ public enum DigitTypes implements Checable{
                 leftNumber = number%10;
             }
         }
+    },
+
+    HAPPY{
+        public boolean isType(long number){
+            int numberSum = 0;
+            long x = number;
+            boolean marker = true;
+
+            long rightNumber = 0;
+
+            while (marker){
+                while (marker){
+                    rightNumber = number%10;
+                    numberSum += rightNumber*rightNumber;
+                    number = number/10;
+
+                    if(number<10){
+                        numberSum +=number*number;
+                        break;
+                    }
+                }
+
+                if(numberSum<10){
+                    if(numberSum == 1){
+                        return true;
+                    }else if(numberSum>1 && numberSum<=9){
+                        return false;
+                    }
+                }else {
+                    number = numberSum;
+                    numberSum = 0;
+                }
+            }
+
+            return false;
+        }
+    },
+
+    SAD{
+        public boolean isType(long number){
+            int numberSum = 0;
+            long x = number;
+            boolean marker = true;
+
+            long rightNumber = 0;
+
+            while (marker){
+                while (marker){
+                    rightNumber = number%10;
+                    numberSum += rightNumber*rightNumber;
+                    number = number/10;
+
+                    if(number<10){
+                        numberSum +=number*number;
+                        break;
+                    }
+                }
+
+                if(numberSum<10){
+                    if(numberSum == 1){
+                        return false;
+                    }else if(numberSum>1 && numberSum<=9){
+                        return true;
+                    }
+                }else {
+                    number = numberSum;
+                    numberSum = 0;
+                }
+            }
+
+            return true;
+        }
+
     };
 }
