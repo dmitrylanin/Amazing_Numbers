@@ -1,6 +1,10 @@
 package numbers;
 
 public class Printing {
+/*
+    В этом классе формирую инструкцию и механику вывода строк со свойствами "одиночных" чисел
+ */
+
 
     public static void printInstruction() {
         System.out.println();
